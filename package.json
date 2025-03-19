@@ -1,6 +1,6 @@
 {
   "name": "mdcopilot",
-  "version": "0.0.0-alpha.0",
+  "version": "0.0.0",
   "scripts": {
     "dev": "tsx ./src/cli.ts",
     "format": "prettier --write .",
