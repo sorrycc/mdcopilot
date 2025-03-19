@@ -9,6 +9,7 @@ Markdown Copilot (mdcopilot) is a command-line tool that enhances your markdown 
 - 🏷️ **Title Generation**: Extracts or generates relevant titles for links
 - 📚 **AI Summaries**: Creates concise summaries of linked content in Chinese
 - 🌐 **Multiple Models**: Supports various AI models for content analysis
+- 👀 **Watch Mode**: Automatically processes changes when files are modified
 
 ## Examples
 
@@ -27,7 +28,11 @@ After:
 ## Usage
 
 ```bash
+# Process a markdown file once
 $ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --model=OpenRouter/openai/gpt-4o-2024-11-20
+
+# Watch mode: automatically process changes when the file is modified
+$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --watch --model=OpenRouter/openai/gpt-4o-2024-11-20
 ```
 
 Check [src/model.ts](./src/model.ts) for all supported models.
