@@ -1,0 +1,48 @@
+{
+  "name": "mdcopilot",
+  "version": "0.0.0-alpha.0",
+  "scripts": {
+    "dev": "tsx ./src/cli.ts",
+    "format": "prettier --write .",
+    "build": "bun build src/cli.ts --minify --outfile dist/cli.mjs --target=node"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "mdcopilot": "./dist/cli.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.2.1",
+    "@types/node-fetch": "^2.6.12",
+    "@types/uuid": "^10.0.0",
+    "ai": "^4.1.61",
+    "dotenv": "^16.4.7",
+    "node-fetch": "2",
+    "pathe": "^2.0.3",
+    "uuid": "^11.1.0",
+    "yargs-parser": "^21.1.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/node": "^22.13.10",
+    "@types/yargs-parser": "^21.0.3",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "yargs-parser": "^21.1.1"
+  },
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
+  ],
+  "keywords": [
+    "cli",
+    "mdcopilot",
+    "markdown",
+    "copilot"
+  ],
+  "license": "MIT",
+  "description": "Markdown Copilot CLI."
+}
