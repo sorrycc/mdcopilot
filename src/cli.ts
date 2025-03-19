@@ -13,6 +13,7 @@ async function processFile(resolvedPath: string, modelName: ModelType) {
     const result = await mdcopilot({
       filePath: resolvedPath,
       model: modelName,
+      stream: true,
     });
     console.log(`Successfully processed ${result.processedLinks} links`);
     return true;
@@ -56,7 +57,7 @@ async function main() {
     process.exit(1);
   }
 
-  const modelName = argv.model || 'Vscode/gpt-4o' as ModelType;
+  const modelName = argv.model || 'Vscode/claude-3.7-sonnet' as ModelType;
 
   // Process the file immediately
   const initialSuccess = await processFile(resolvedPath, modelName);

@@ -1,4 +1,4 @@
-import { generateText } from 'ai';
+import { generateText, streamText } from 'ai';
 import assert from 'assert';
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -31,7 +31,11 @@ async function fetchMarkdownContent(url: string): Promise<string | null> {
   }
 }
 
-export async function mdcopilot(opts: { filePath: string; model: ModelType }) {
+export async function mdcopilot(opts: {
+  filePath: string;
+  model: ModelType;
+  stream: boolean;
+}) {
   // Read the markdown file
   let content = fs.readFileSync(opts.filePath, 'utf-8');
 
@@ -85,12 +89,26 @@ export async function mdcopilot(opts: { filePath: string; model: ModelType }) {
 
 ${markdown}
       `.trim();
-      const result = await generateText({
-        model,
-        prompt: summaryPrompt,
-      });
-
-      linkPlaceholders[id].summary = result.text;
+      const result = await (async () => {
+        let text = '';
+        if (opts.stream) {
+          const stream = await streamText({
+            model,
+            prompt: summaryPrompt,
+          });
+          for await (const chunk of stream.textStream) {
+            text += chunk;
+          }
+          return await stream.text;
+        } else {
+          const result = await generateText({
+            model,
+            prompt: summaryPrompt,
+          });
+          return result.text;
+        }
+      })();
+      linkPlaceholders[id].summary = result;
       content = content.replace(
         `Fetching Summary#${id}`,
         linkPlaceholders[id].summary,
