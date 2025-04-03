@@ -6,6 +6,7 @@ import { resolve } from 'pathe';
 import fs from 'fs';
 import chokidar from 'chokidar';
 import { ModelType } from './model.js';
+import assert from 'assert';
 
 async function processFile(resolvedPath: string, modelName: ModelType) {
   try {
@@ -57,7 +58,8 @@ async function main() {
     process.exit(1);
   }
 
-  const modelName = argv.model || 'Vscode/claude-3.7-sonnet' as ModelType;
+  const modelName = argv.model as ModelType;
+  assert(modelName, 'model is required');
 
   // Process the file immediately
   const initialSuccess = await processFile(resolvedPath, modelName);

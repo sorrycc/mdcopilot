@@ -34,7 +34,7 @@ After:
 $ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --model=OpenRouter/openai/gpt-4o-2024-11-20
 
 # Watch mode: automatically process changes when the file is modified
-$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --watch --model=OpenRouter/openai/gpt-4o-2024-11-20
+$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --watch --model=OpenRouter/anthropic/claude-3.5-sonnet
 ```
 
 Check [src/model.ts](./src/model.ts) for all supported models.
