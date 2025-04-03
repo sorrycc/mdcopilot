@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import { v4 as uuidv4 } from 'uuid';
-import { DEFAULT_SUMMARY_PROMPT, DEFAULT_SYSTEM_PROMPT } from './constants';
+import { DEFAULT_SUMMARY_PROMPT } from './constants';
 import { ModelType, getModel } from './model';
 
 dotenv.config();
