@@ -44,7 +44,6 @@ const OPEN_ROUTER_MODELS = [
   'OpenRouter/anthropic/claude-3.5-sonnet',
   'OpenRouter/anthropic/claude-3.7-sonnet',
   'OpenRouter/anthropic/claude-3.7-sonnet-thought',
-
 ] as const;
 const TENCENT_MODELS = [
   'Tencent/deepseek-v3', // don't support tools

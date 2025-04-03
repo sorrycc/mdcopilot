@@ -1,12 +1,11 @@
 #!/usr/bin/env -S node --no-warnings=ExperimentalWarning
-
-import { mdcopilot } from './index.js';
-import yargsParser from 'yargs-parser';
-import { resolve } from 'pathe';
-import fs from 'fs';
-import chokidar from 'chokidar';
-import { ModelType } from './model.js';
 import assert from 'assert';
+import chokidar from 'chokidar';
+import fs from 'fs';
+import { resolve } from 'pathe';
+import yargsParser from 'yargs-parser';
+import { mdcopilot } from './index.js';
+import { ModelType } from './model.js';
 
 async function processFile(resolvedPath: string, modelName: ModelType) {
   try {
@@ -99,7 +98,7 @@ async function main() {
   }
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('Unhandled error:', error);
   process.exit(1);
 });

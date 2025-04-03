@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import { v4 as uuidv4 } from 'uuid';
+import { DEFAULT_SUMMARY_PROMPT, DEFAULT_SYSTEM_PROMPT } from './constants';
 import { ModelType, getModel } from './model';
 
 dotenv.config();
@@ -35,6 +36,7 @@ export async function mdcopilot(opts: {
   filePath: string;
   model: ModelType;
   stream: boolean;
+  summaryPrompt?: string;
 }) {
   // Read the markdown file
   let content = fs.readFileSync(opts.filePath, 'utf-8');
@@ -76,19 +78,8 @@ export async function mdcopilot(opts: {
 
       // Generate summary
       const model = getModel(opts.model);
-      let summaryPrompt = `
-请总结这篇文章。
-
-- 用中文总结。
-- 100 - 300 字，不要超过 300 字。
-- 不要换行，如有列表项需要换行，请以 1), 2) 的方式让他归为一类，总结里不要出现多行代码。
-- 不要用太官方的口吻。
-- 注意盘古之白（中文和字母，中文和数字之间需要空格）
-
-文章如下。
-
-${markdown}
-      `.trim();
+      let summaryPrompt = opts.summaryPrompt || DEFAULT_SUMMARY_PROMPT;
+      summaryPrompt = summaryPrompt.replace('{{content}}', markdown).trim();
       const result = await (async () => {
         let text = '';
         if (opts.stream) {
