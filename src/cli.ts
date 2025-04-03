@@ -5,15 +5,16 @@ import fs from 'fs';
 import { resolve } from 'pathe';
 import yargsParser from 'yargs-parser';
 import { mdcopilot } from './index.js';
-import { ModelType } from './model.js';
+import { ModelType } from './summarizer/model.js';
 
-async function processFile(resolvedPath: string, modelName: ModelType) {
+async function processFile(resolvedPath: string, modelName: ModelType, summaryPrompt?: string) {
   try {
     console.log(`Processing markdown file: ${resolvedPath}`);
     const result = await mdcopilot({
       filePath: resolvedPath,
       model: modelName,
       stream: true,
+      summaryPrompt,
     });
     console.log(`Successfully processed ${result.processedLinks} links`);
     return true;
@@ -61,7 +62,7 @@ async function main() {
   assert(modelName, 'model is required');
 
   // Process the file immediately
-  const initialSuccess = await processFile(resolvedPath, modelName);
+  const initialSuccess = await processFile(resolvedPath, modelName, argv.summaryPrompt);
 
   // If watch mode is enabled and initial processing was successful
   if (argv.watch) {
@@ -76,7 +77,7 @@ async function main() {
     // Process file on change
     watcher.on('change', async (path) => {
       console.log(`File changed: ${path}`);
-      await processFile(resolvedPath, modelName);
+      await processFile(resolvedPath, modelName, argv.summaryPrompt);
     });
 
     // Handle watcher errors

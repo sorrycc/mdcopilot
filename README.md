@@ -37,7 +37,7 @@ $ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --model
 $ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --watch --model=OpenRouter/anthropic/claude-3.5-sonnet
 ```
 
-Check [src/model.ts](./src/model.ts) for all supported models.
+Check [src/model.ts](src/summarizer/model.ts) for all supported models.
 
 ## License
 

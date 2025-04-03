@@ -1,36 +1,13 @@
 import { generateText, streamText } from 'ai';
-import assert from 'assert';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import fetch from 'node-fetch';
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_SUMMARY_PROMPT } from './constants';
-import { ModelType, getModel } from './model';
+import { getContent } from './content-providers/content-provider';
+import { ModelType, getModel } from './summarizer/model';
+import { summarize } from './summarizer/summarizer';
 
 dotenv.config();
-
-/**
- * Fetches markdown content from a URL using Jina.ai
- */
-async function fetchMarkdownContent(url: string): Promise<string | null> {
-  try {
-    console.log(`Fetching markdown content from ${url}`);
-    const jinaUrl = `https://r.jina.ai/${encodeURIComponent(url)}`;
-    const response = await fetch(jinaUrl);
-
-    if (!response.ok) {
-      console.error(
-        `Failed to fetch from Jina.ai: ${response.status} ${response.statusText}`,
-      );
-      return null;
-    }
-
-    return await response.text();
-  } catch (error) {
-    console.error(`Error fetching from Jina.ai:`, error);
-    return null;
-  }
-}
 
 export async function mdcopilot(opts: {
   filePath: string;
@@ -62,43 +39,18 @@ export async function mdcopilot(opts: {
 
   for (const [id, data] of Object.entries(linkPlaceholders)) {
     try {
-      // Fetch markdown content from Jina.ai
-      const markdown = await fetchMarkdownContent(data.url);
-      assert(markdown, `Failed to fetch markdown content from ${data.url}`);
-
-      // Replace the title placeholder
-      const title = (() => {
-        const titleLine = markdown.split('\n')[0].replace('Title: ', '');
-        return titleLine.trim();
-      })();
-      assert(title, `Failed to generate title for ${data.url}`);
+      let { title, content } = await getContent(data.url);
       linkPlaceholders[id].title = title;
       content = content.replace(`Fetching Title#${id}`, title);
       fs.writeFileSync(opts.filePath, content, 'utf-8');
 
       // Generate summary
-      const model = getModel(opts.model);
-      let summaryPrompt = opts.summaryPrompt || DEFAULT_SUMMARY_PROMPT;
-      summaryPrompt = summaryPrompt.replace('{{content}}', markdown).trim();
-      const result = await (async () => {
-        let text = '';
-        if (opts.stream) {
-          const stream = await streamText({
-            model,
-            prompt: summaryPrompt,
-          });
-          for await (const chunk of stream.textStream) {
-            text += chunk;
-          }
-          return await stream.text;
-        } else {
-          const result = await generateText({
-            model,
-            prompt: summaryPrompt,
-          });
-          return result.text;
-        }
-      })();
+      const result = await summarize({
+        content,
+        summaryPrompt: opts.summaryPrompt,
+        model: opts.model,
+        stream: opts.stream,
+      });
       linkPlaceholders[id].summary = result;
       content = content.replace(
         `Fetching Summary#${id}`,
