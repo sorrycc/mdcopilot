@@ -1,3 +1,10 @@
+## 0.0.2
+
+`2025-04-05`
+
+- fix: update variable name for clarity and ensure correct content is passed to summarizer in mdcopilot by [@sorrycc](https://github.com/sorrycc)
+
+
 ## 0.0.1
 
 `2025-04-03`
