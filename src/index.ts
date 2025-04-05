@@ -39,14 +39,14 @@ export async function mdcopilot(opts: {
 
   for (const [id, data] of Object.entries(linkPlaceholders)) {
     try {
-      let { title, content } = await getContent(data.url);
+      let { title, content: urlContent } = await getContent(data.url);
       linkPlaceholders[id].title = title;
       content = content.replace(`Fetching Title#${id}`, title);
       fs.writeFileSync(opts.filePath, content, 'utf-8');
 
       // Generate summary
       const result = await summarize({
-        content,
+        content: urlContent,
         summaryPrompt: opts.summaryPrompt,
         model: opts.model,
         stream: opts.stream,
