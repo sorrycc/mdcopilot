@@ -1,5 +1,10 @@
 # Markdown Copilot CLI
 
+[![](https://badgen.net/npm/v/mdcopilot)](https://www.npmjs.com/package/mdcopilot)
+[![](https://badgen.net/npm/dm/mdcopilot)](https://www.npmjs.com/package/mdcopilot)
+[![](https://github.com/sorrycc/mdcopilot/actions/workflows/ci.yml/badge.svg)](https://github.com/sorrycc/mdcopilot/actions/workflows/ci.yml)
+[![](https://badgen.net/npm/license/mdcopilot)](https://www.npmjs.com/package/mdcopilot)
+
 Markdown Copilot (mdcopilot) is a command-line tool that enhances your markdown files by automatically processing URLs, fetching content, generating titles, and adding AI-powered summaries.
 
 ![](https://cdn.jsdelivr.net/gh/sorrycc-bot/images@main/uPic/mdcopilot2.gif)
@@ -29,8 +34,8 @@ After:
 
 ## Usage
 
-```
-mdcopilot <path-to-markdown-file> --model=<model-name> --summary-prompt=<summary-prompt>
+```bash
+$ mdcopilot <path-to-markdown-file> --model=<model-name> --summary-prompt=<summary-prompt>
 ```
 
 ### Options
