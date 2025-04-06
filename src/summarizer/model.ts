@@ -1,6 +1,37 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import assert from 'assert';
 
+/**
+ * Model Tools Support
+ *
+^ Platform ^ Model ^ Support ^
+| DeepSeek | V3 | ✅ |
+| DeepSeek | R1 | ❌ |
+| SiliconFlow | V3 | ✅ |
+| SiliconFlow | R1 | ❌ |
+| Aliyun | V3 | ❌ |
+| Aliyun | R1 | ❌ |
+| Doubao | V3 | ✅ |
+| Doubao | R1 | ✅ |
+| Tencent | V3 | ❌ |
+| Tencent | R1 | ❌ |
+| Groq | qwen-qwq-32b | ✅ |
+| Groq | deepseek-r1-distill-qwen-32b | ❌ |
+| Groq | deepseek-r1-distill-llama-70b | ✅ |
+| Grok | grok-2-1212 | ❌ |
+| Gemini | 2.0-flash-001 | ✅ |
+| Gemini | 2.0-flash-thinking-exp-01-21 | ❌ |
+| Gemini | 2.0-pro-exp-02-05 | ✅ |
+| Gemini | gemma-3-27b-it | ❌ |
+| OpenRouter | qwen/qwq-32b | ❌ |
+| OpenRouter | openai/gpt-4o-2024-11-20 | ✅ |
+| OpenRouter | openai/o1-mini | ❌ |
+| OpenRouter | openai/gpt-4-turbo | ✅ |
+| OpenRouter | anthropic/claude-3.5-sonnet | ✅ |
+| Ollama | qwq:32b | ❌ |
+| Inference | * | ❌ |
+*/
+
 const GROQ_MODELS = [
   'Groq/qwen-qwq-32b',
   'Groq/deepseek-r1-distill-qwen-32b',
@@ -14,6 +45,7 @@ const GOOGLE_MODELS = [
   'Google/gemini-2.0-flash-001',
   'Google/gemini-2.0-flash-thinking-exp-01-21', // don't support tools
   'Google/gemini-2.0-pro-exp-02-05',
+  'Google/gemini-2.5-pro-exp-03-25',
   'Google/gemma-3-27b-it', // don't support tools
 ] as const;
 const SILICONFLOW_MODELS = [
@@ -37,13 +69,22 @@ const GROK_MODELS = [
 ] as const;
 const OPEN_ROUTER_MODELS = [
   'OpenRouter/qwen/qwq-32b', // don't support tools
-  'OpenRouter/openai/gpt-4o-2024-11-20', // function.description has 2014 string limit
   'OpenRouter/openai/o1-mini', // don't support tools
   'OpenRouter/openai/gpt-4-turbo', // function.description has 2014 string limit
   'OpenRouter/openai/gpt-3.5-turbo-0613',
+  'OpenRouter/openai/gpt-4.5-preview',
+  'OpenRouter/openai/o3-mini-high',
+  'OpenRouter/openai/o3-mini',
+  'OpenRouter/openai/o1',
+  'OpenRouter/openai/gpt-4-32k',
+  'OpenRouter/openai/gpt-4o', // function.description has 2014 string limit
+  'OpenRouter/openai/gpt-4o-mini',
+  'OpenRouter/openai/o1-preview',
   'OpenRouter/anthropic/claude-3.5-sonnet',
   'OpenRouter/anthropic/claude-3.7-sonnet',
   'OpenRouter/anthropic/claude-3.7-sonnet-thought',
+  'OpenRouter/mistralai/mistral-small-3.1-24b-instruct',
+  'OpenRouter/deepseek/deepseek-chat-v3-0324',
 ] as const;
 const TENCENT_MODELS = [
   'Tencent/deepseek-v3', // don't support tools
@@ -66,6 +107,26 @@ const GROKMIRROR_MODELS = [
   'GrokMirror/grok-3-think',
   'GrokMirror/grok-3-deepsearch',
 ] as const;
+const INFERENCE_MODELS = [
+  'Inference/deepseek/deepseek-r1/fp-8',
+  'Inference/deepseek/deepseek-v3/fp-8',
+  'Inference/deepseek/deepseek-v3-0324/fp-8',
+  'Inference/google/gemma-3-27b-instruct/bf-16',
+  'Inference/qwen/qwen2.5-7b-instruct/bf-16',
+] as const;
+const OPENAI_MODELS = [
+  'OpenAI/gpt-4.5-preview',
+  'OpenAI/o3-mini-high',
+  'OpenAI/o3-mini',
+  'OpenAI/o1',
+  'OpenAI/gpt-4-32k',
+  'OpenAI/gpt-4-turbo',
+  'OpenAI/gpt-4o',
+  'OpenAI/gpt-4o-mini',
+  'OpenAI/o1-preview',
+  'OpenAI/o1-mini',
+  'OpenAI/gpt-3.5-turbo-0613',
+] as const;
 
 export type ModelType =
   | (typeof GROQ_MODELS)[number]
@@ -79,7 +140,9 @@ export type ModelType =
   | (typeof TENCENT_MODELS)[number]
   | (typeof OLLAMA_MODELS)[number]
   | (typeof VSCODE_MODELS)[number]
-  | (typeof GROKMIRROR_MODELS)[number];
+  | (typeof GROKMIRROR_MODELS)[number]
+  | (typeof INFERENCE_MODELS)[number]
+  | (typeof OPENAI_MODELS)[number];
 
 export function getModel(model: ModelType) {
   let apiKey;
@@ -118,6 +181,12 @@ export function getModel(model: ModelType) {
   } else if (GROKMIRROR_MODELS.includes(model as any)) {
     apiKey = process.env.GROKMIRROR_API_KEY;
     baseURL = process.env.GROKMIRROR_BASE_URL;
+  } else if (INFERENCE_MODELS.includes(model as any)) {
+    apiKey = process.env.INFERENCE_API_KEY;
+    baseURL = 'https://api.inference.net/v1';
+  } else if (OPENAI_MODELS.includes(model as any)) {
+    apiKey = process.env.OPENAI_API_KEY;
+    baseURL = 'https://api.openai.com/v1';
   } else {
     throw new Error(`Unsupported model: ${model}`);
   }
@@ -128,13 +197,13 @@ export function getModel(model: ModelType) {
     apiKey,
     baseURL,
   });
-  return openai(getRealModel(model));
+  return openai(stripProviderPrefix(model));
 }
 
 // e.g.
 // 'OpenRouter/openai/gpt-4o-2024-11-20' -> 'openai/gpt-4o-2024-11-20'
 // 'foo/bar' -> 'bar'
-function getRealModel(model: ModelType) {
+function stripProviderPrefix(model: ModelType) {
   if (model.includes('/')) {
     return model.split('/').slice(1).join('/');
   } else {
