@@ -29,15 +29,27 @@ After:
 
 ## Usage
 
-```bash
-# Process a markdown file once
-$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --model=OpenRouter/openai/gpt-4o-2024-11-20
-
-# Watch mode: automatically process changes when the file is modified
-$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx mdcopilot <path-to-markdown-file> --watch --model=OpenRouter/anthropic/claude-3.5-sonnet
+```
+mdcopilot <path-to-markdown-file> --model=<model-name> --summary-prompt=<summary-prompt>
 ```
 
-Check [src/model.ts](src/summarizer/model.ts) for all supported models.
+### Options
+
+- `--model`: The model to use for processing the markdown file.
+- `--summary-prompt`: The prompt to use for summarizing the linked content.
+- `--watch`: Watch the markdown file for changes and process it automatically.
+
+### Examples
+
+```bash
+# Process a markdown file once
+$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx -y mdcopilot <path-to-markdown-file> --model=OpenRouter/openai/gpt-4o-2024-11-20
+
+# Watch mode: automatically process changes when the file is modified
+$ OPEN_ROUTER_API_KEY=sk-or-xxxxxx npx -y mdcopilot <path-to-markdown-file> --watch --model=OpenRouter/anthropic/claude-3.5-sonnet
+```
+
+Check [src/summarizer/model.ts](src/summarizer/model.ts) for all supported models.
 
 ## License
 
