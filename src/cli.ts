@@ -7,7 +7,11 @@ import yargsParser from 'yargs-parser';
 import { mdcopilot } from './index.js';
 import { ModelType } from './summarizer/model.js';
 
-async function processFile(resolvedPath: string, modelName: ModelType, summaryPrompt?: string) {
+async function processFile(
+  resolvedPath: string,
+  modelName: ModelType,
+  summaryPrompt?: string,
+) {
   try {
     console.log(`Processing markdown file: ${resolvedPath}`);
     const result = await mdcopilot({
@@ -62,7 +66,11 @@ async function main() {
   assert(modelName, 'model is required');
 
   // Process the file immediately
-  const initialSuccess = await processFile(resolvedPath, modelName, argv.summaryPrompt);
+  const initialSuccess = await processFile(
+    resolvedPath,
+    modelName,
+    argv.summaryPrompt,
+  );
 
   // If watch mode is enabled and initial processing was successful
   if (argv.watch) {

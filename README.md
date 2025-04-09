@@ -9,15 +9,6 @@ Markdown Copilot (mdcopilot) is a command-line tool that enhances your markdown 
 
 ![](https://cdn.jsdelivr.net/gh/sorrycc-bot/images@main/uPic/mdcopilot2.gif)
 
-## Features
-
-- 🔍 **URL Detection**: Automatically finds URLs in your markdown files
-- 📝 **Content Fetching**: Retrieves content from URLs using Jina.ai
-- 🏷️ **Title Generation**: Extracts or generates relevant titles for links
-- 📚 **AI Summaries**: Creates concise summaries of linked content in Chinese
-- 🌐 **Multiple Models**: Supports various AI models for content analysis
-- 👀 **Watch Mode**: Automatically processes changes when files are modified
-
 ## Examples
 
 Before:
