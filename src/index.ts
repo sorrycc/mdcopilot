@@ -1,10 +1,8 @@
-import { generateText, streamText } from 'ai';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { DEFAULT_SUMMARY_PROMPT } from './constants';
 import { getContent } from './content-providers/content-provider';
-import { ModelType, getModel } from './summarizer/model';
+import { ModelType } from './summarizer/model';
 import { summarize } from './summarizer/summarizer';
 
 dotenv.config();
