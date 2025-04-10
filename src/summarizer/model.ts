@@ -1,5 +1,7 @@
 import { createOpenAI } from '@ai-sdk/openai';
+import { createXai } from '@ai-sdk/xai';
 import assert from 'assert';
+import { createOllama } from 'ollama-ai-provider';
 
 /**
  * Model Tools Support
@@ -65,7 +67,10 @@ const DOUBAO_MODELS = [
   'Doubao/ep-20250210151757-wvgcj',
 ] as const;
 const GROK_MODELS = [
-  'Grok/grok-2-1212', // don't work
+  'Grok/grok-3-beta',
+  'Grok/grok-3-fast-beta',
+  'Grok/grok-3-mini-beta',
+  'Grok/grok-3-mini-fast-beta',
 ] as const;
 const OPEN_ROUTER_MODELS = [
   'OpenRouter/qwen/qwq-32b', // don't support tools
@@ -85,6 +90,7 @@ const OPEN_ROUTER_MODELS = [
   'OpenRouter/anthropic/claude-3.7-sonnet-thought',
   'OpenRouter/mistralai/mistral-small-3.1-24b-instruct',
   'OpenRouter/deepseek/deepseek-chat-v3-0324',
+  'OpenRouter/openrouter/quasar-alpha',
 ] as const;
 const TENCENT_MODELS = [
   'Tencent/deepseek-v3', // don't support tools
@@ -100,12 +106,6 @@ const VSCODE_MODELS = [
   'Vscode/gemini-2.0-flash',
   'Vscode/o3-mini',
   'Vscode/o1-ga',
-] as const;
-const GROKMIRROR_MODELS = [
-  'GrokMirror/grok-2',
-  'GrokMirror/grok-3',
-  'GrokMirror/grok-3-think',
-  'GrokMirror/grok-3-deepsearch',
 ] as const;
 const INFERENCE_MODELS = [
   'Inference/deepseek/deepseek-r1/fp-8',
@@ -140,13 +140,19 @@ export type ModelType =
   | (typeof TENCENT_MODELS)[number]
   | (typeof OLLAMA_MODELS)[number]
   | (typeof VSCODE_MODELS)[number]
-  | (typeof GROKMIRROR_MODELS)[number]
   | (typeof INFERENCE_MODELS)[number]
   | (typeof OPENAI_MODELS)[number];
 
 export function getModel(model: ModelType) {
   let apiKey;
   let baseURL;
+
+  if (OLLAMA_MODELS.includes(model as any)) {
+    const ollama = createOllama({
+      baseURL: process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434/api',
+    });
+    return ollama(stripProviderPrefix(model));
+  }
 
   if (GOOGLE_MODELS.includes(model as any)) {
     apiKey = process.env.GOOGLE_API_KEY;
@@ -168,7 +174,10 @@ export function getModel(model: ModelType) {
     baseURL = 'https://ark.cn-beijing.volces.com/api/v3';
   } else if (GROK_MODELS.includes(model as any)) {
     apiKey = process.env.GROK_API_KEY;
-    baseURL = 'https://api.grok.com/v1';
+    const xai = createXai({
+      apiKey,
+    });
+    return xai(stripProviderPrefix(model));
   } else if (OPEN_ROUTER_MODELS.includes(model as any)) {
     apiKey = process.env.OPEN_ROUTER_API_KEY;
     baseURL = 'https://openrouter.ai/api/v1';
@@ -178,9 +187,6 @@ export function getModel(model: ModelType) {
   } else if (VSCODE_MODELS.includes(model as any)) {
     apiKey = 'none';
     baseURL = process.env.VSCODE_BASE_URL;
-  } else if (GROKMIRROR_MODELS.includes(model as any)) {
-    apiKey = process.env.GROKMIRROR_API_KEY;
-    baseURL = process.env.GROKMIRROR_BASE_URL;
   } else if (INFERENCE_MODELS.includes(model as any)) {
     apiKey = process.env.INFERENCE_API_KEY;
     baseURL = 'https://api.inference.net/v1';
